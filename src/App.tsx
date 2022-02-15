@@ -7,13 +7,8 @@ interface Iships {
 
 function App() {
   const [starships, setStarships] = useState([]);
-  const [getStarships, setGetStarships] = useState(false);
 
-  useEffect(() => {
-    window.addEventListener("focus", () => setGetStarships(!getStarships));
-  }, []);
-
-  useEffect(() => {
+  const getStarships = () => {
     fetch("https://swapi.dev/api/starships")
       .then((data) => data.json())
       .then((json) => {
@@ -22,20 +17,18 @@ function App() {
         setStarships(starships);
       })
       .catch((err) => console.error(err));
-    // setGetStarships(false);
-  }, [getStarships]);
+  };
+
+  useEffect(() => {
+    getStarships();
+    window.addEventListener("focus", getStarships);
+  }, []);
 
   return (
     <div className="App">
       {starships ? (
         <div>
-          <button
-            onClick={() => {
-              setGetStarships(!getStarships);
-            }}
-          >
-            Get Starships
-          </button>
+          <button onClick={getStarships}>Get Starships</button>
           <div className="ships">
             {starships.map((ship, idx) => {
               return <h4 key={idx}>{ship}</h4>;
